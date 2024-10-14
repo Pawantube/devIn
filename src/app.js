@@ -1,18 +1,34 @@
 const express=require('express');
 const app=express();
+//dynamic routes //http://localhost:7777/user?userId=101&password=hello  "&" will make new row
+//req.query
+//req.params
+// regex "/a/"
+app.get("/user/:userId/:name/:password",(req,res)=>{
+	console.log(req.params)
+	res.send({
+				"firstName":"pawan",
+		 		"lastname":"saw"
+		 	})
+
+})
+
+
 
 /*
 dont write app.use("/user",(req,res)) here other wise it will override all the api of /user and runs the callback of app.use 
 
 */
 //instead of app.use  it will by deafult it get api  and this will match all the http api use app.methodName "app.get,app.post"
-app.get("/user",(req,res)=>{
-	res.send({
-		"firstName":"pawan",
-		"lastname":"saw"
-	})
+//"/ab?c" "ab+c" "/ab*cd" "/a(bc)?d" "/a(bc)+d" "/a/" 
+// app.get("/user",(req,res)=>{
+// 	console.log(req.query)
+// 	res.send({
+// 		"firstName":"pawan",
+// 		"lastname":"saw"
+// 	})
 
-})//this will handle only get api of users
+//this will handle only get api of users
 
 app.post("/user",(req,res)=>{
 	res.send("send successfully");

@@ -1,0 +1,18 @@
+{
+  "name": "devtinder0.1",
+  "version": "1.0.0",
+  "description": "tinder for developers and help them to make peer if they found matches",
+  "main": "index.js",
+  "scripts": {
+	
+	"start":"nodemon src/app.js",
+	"dev":"nodemon src/app.js",
+
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "saw",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.1"
+  }
+}

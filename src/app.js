@@ -1,83 +1,102 @@
-const express=require('express');
+const express=require("express");
 const app=express();
-//dynamic routes //http://localhost:7777/user?userId=101&password=hello  "&" will make new row
-//req.query
-//req.params
-// regex "/a/"
-app.get("/user/:userId/:name/:password",(req,res)=>{
-	console.log(req.params)
-	res.send({
-				"firstName":"pawan",
-		 		"lastname":"saw"
-		 	})
-
+//case 1
+/*app.get("/user",(req,res)=>{
+	//if there is no routes handler callback api then it will continue on sending request till the browser defualt timer even if there's line of code like 	 
+	//console.log("it will not work without res.send")
+	//one routes can have multiple routes handler
+	
+	res.send("sended successfully")
 })
-
-
-
-/*
-dont write app.use("/user",(req,res)) here other wise it will override all the api of /user and runs the callback of app.use 
 
 */
-//instead of app.use  it will by deafult it get api  and this will match all the http api use app.methodName "app.get,app.post"
-//"/ab?c" "ab+c" "/ab*cd" "/a(bc)?d" "/a(bc)+d" "/a/" 
-// app.get("/user",(req,res)=>{
-// 	console.log(req.query)
-// 	res.send({
-// 		"firstName":"pawan",
-// 		"lastname":"saw"
-// 	})
+//case 2
+/*app.get("/user",(req,res)=>{
+	res.send("it will be only run");
+	console.log("this will also run ");
+},(req,res)=>{
+	res.send("it will not be run callback will return from two line above and not run");
+	console.log("this will also not run ");
+})*/
+//case 3
+/*app.get("/user",(req,res)=>{
+	//here is no res.send therefor it will keep on sending request
+	console.log("it will run anyway but void of res.send will keep on sending request")
+},(req,res)=>{
+	res.send("this whole code will not work only sending request will be occurs");
+	console.log("this will definetly not run")
+})
+*/
+//case 4:using the next in parameter so that it will lend to next request handler
+/*app.get("/user",(req,res,next)=>{
+	next();//if next is before console it will first does next task then console.log
+	console.log("it will run skip the code to third line and res.send of second handler will run")
+	//next(); if next is here then it will does console.log then next task will do their job
+},(req,res)=>{
+	res.send("it will run now");
+	console.log("this will also execute")
+})
+*/
+//case 5: one have res.send still it passes next and 2nd also have res.send then it will encounter an error
+/*app.get("/user",(req,res,next)=>{
+	console.log("this line will work definitely")
+res.send("this will works  but  next(); response  will not work and will give an error ");
+next();//this will generate error " Cannot set headers after they are sent to the client"
+//if the response is send to client it will not be able to resend connection would be stop close here
+},(req,res)=>{
+console.log("above res.send any synchronous code will work but after res.send it will throw an error")
+res.send("when javascript see this line it will generate an error and will not run after this line before this normal synchronous code will work")
+console.log("this console will also not work");
+}
+) 	
+*/ 
+ //case 6: if next is above then res.send in one then it will generate error when function returns from second and try's to run code of one of res.send
+/*app.get("/user",(req,res,next)=>{
+next();
+res.send("it will not work and gives and error ");
+},(req,res)=>{
+	res.send("this will work first and return where it's called");
+	console.log("now it's going to return from where it has been called")
 
-//this will handle only get api of users
+})*/
+//case 7:
+/*app.get("/user",(req,res,next)=>{
+	console.log("1")
+	next();
+	;
+	},(req,res,next)=>{
+		console.log("2")
+		next();
+	
+	},(req,res,next)=>{
+		console.log("3")
+		next();
+	
+	}
+	,(req,res)=>{
+		res.send("this line will run but if there's again next(); then it will not give an error it will look for res.send in next parameter but if there's no next in last parameter it will keep on sending ")	
+	})
 
-app.post("/user",(req,res)=>{
-	res.send("send successfully");
+*/
+//case 8: binding in array it will not effect code but it will give clearity
+/*app.get("/user",(req,res,next)=>{
+console.log("proceed to next");
+next();
+},[(req,res,next)=>{
+	console.log("this is inside arraya");
+	next();
+},(req,res,next)=>{
+	console.log("this is inside array too")
+	next();
+
+}],(req,res)=>{
+res.send("access received");
 })
 
-
-
-
-
-
-
+*/
 
 
 
 app.listen(7777,()=>{
-	console.log("app is listening in port 7777")//this will only work if server is running
-});
-
-
-
-//handling the  code
-
-
-// app.use((req,res)=>{	
-// 	res.send("hello from the server");//server handler 
-// 	//whatever request it would return the same piece of code wheather it's / or /test it will work same
-// 	//to handle server request seperately we need to write in qoutes followed by / = "/test"
-// })
-// app.use("/test",(req,res)=>{
-// 	res.send("hello from test routing ")
-// })
-// app.use("*",(req,res)=>{
-// 	res.send("erroe")
-// })
-// app.use("/",(req,res)=>{
-// 	res.send("hel")
-// })
-
-
-//install nodemon it will auto refresh the code whenever it's refresh and rerun the server 
-//we can write our own script to start the server instead of writing big lines of code again and again
-// to do that so goto package.json and write script
-//"start":"nodemon src/app.js"
-//start and dev are custom script
-//package log.json is sufficient to create node module once again if it's deleted
-//ignore the node_modules in github by adding file .ignorer and add path as node_module
-// if routes is started with "/" it will always work the callback of "/" and it will give everything we write the same routes address
-// if specific routes is written above of "/" it will work fine 
-//it should never be written above of the code other wise it will always redirect to same routes and it will override because the routes started with "/" it will treat as a string finder it will mathces with the first letter /
-// order should be correct so that it will redirect to perticular routes
-// "/hello/2" should first then "/hello" then "/"
-// we are making get api call  by default to perticular routes
+	console.log("app is listening in port 7777")
+})
